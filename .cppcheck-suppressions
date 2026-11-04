@@ -1,0 +1,7 @@
+# RAII stage timers in chain.cpp are only used for their destructor.
+unreadVariable:src/chain.cpp
+# Explicit loops are kept where they read more clearly than <numeric> algorithms.
+useStlAlgorithm
+missingIncludeSystem
+unusedFunction
+checkersReport

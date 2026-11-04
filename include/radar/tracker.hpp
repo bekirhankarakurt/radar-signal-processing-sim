@@ -3,11 +3,13 @@
 #include "radar/clustering.hpp"
 #include "radar/config.hpp"
 
+#include <cstdint>
+#include <string_view>
 #include <vector>
 
 namespace radar {
 
-enum class TrackStatus { Tentative, Confirmed, Deleted };
+enum class TrackStatus : std::uint8_t { Tentative, Confirmed, Deleted };
 
 struct Track {
     std::size_t id = 0;

@@ -13,8 +13,7 @@ PulseCompressor::PulseCompressor(const ComplexVector& waveform, const WindowSpec
     : input_samples_(input_samples),
       output_samples_(output_samples),
       plan_(next_power_of_two(input_samples + waveform.size() - 1)),
-      reference_spectrum_(plan_.size()),
-      snr_gain_(0.0) {
+      reference_spectrum_(plan_.size()) {
     if (waveform.empty() || output_samples > input_samples) {
         throw std::invalid_argument("invalid pulse compressor dimensions");
     }

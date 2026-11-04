@@ -64,15 +64,15 @@ public:
 };
 
 unsigned long long parse_unsigned(std::string_view flag, const std::string& value) {
-    try {
-        std::size_t pos = 0;
-        const auto v = std::stoull(value, &pos);
-        if (pos == value.size() && value.front() != '-') {
-            return v;
-        }
-    } catch (const std::exception&) {
+    const std::string message = std::string(flag) + " expects a non-negative integer, got '" + value + "'";
+    if (value.empty() || value.find_first_not_of("0123456789") != std::string::npos) {
+        throw UsageError(message);
     }
-    throw UsageError(std::string(flag) + " expects a non-negative integer, got '" + value + "'");
+    try {
+        return std::stoull(value);
+    } catch (const std::out_of_range&) {
+        throw UsageError(message);
+    }
 }
 
 Options parse_args(const std::vector<std::string>& args) {

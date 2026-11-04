@@ -36,7 +36,7 @@ public:
         std::chrono::steady_clock::time_point start_;
     };
 
-    [[nodiscard]] Scope scope(std::string name) { return Scope(*this, std::move(name)); }
+    [[nodiscard]] Scope scope(std::string name) { return {*this, std::move(name)}; }
 
     void add(const std::string& name, double ms) {
         for (auto& e : entries_) {

@@ -3,11 +3,12 @@
 #include "radar/types.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <vector>
 
 namespace radar {
 
-enum class FftDirection { Forward, Inverse };
+enum class FftDirection : std::uint8_t { Forward, Inverse };
 
 /// Precomputed iterative radix-2 decimation-in-time FFT.
 ///
