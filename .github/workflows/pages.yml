@@ -1,0 +1,77 @@
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-site:
+    name: Coverage, API docs and sample viewers
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: |
+          sudo apt-get update && sudo apt-get install -y doxygen graphviz
+          pipx install gcovr
+      - name: Coverage build and tests
+        run: |
+          cmake -S . -B build-cov -DCMAKE_BUILD_TYPE=Debug -DRADAR_ENABLE_COVERAGE=ON
+          cmake --build build-cov -j
+          ctest --test-dir build-cov --output-on-failure -j 4
+      - name: Coverage report
+        run: |
+          mkdir -p site/coverage
+          gcovr -r . --filter src/ --filter include/ build-cov \
+            --html-details site/coverage/index.html --html-title "radar-signal-processing-sim coverage" \
+            --json-summary coverage-summary.json --print-summary
+          python3 - <<'PY'
+          import json
+          pct = json.load(open("coverage-summary.json"))["line_percent"]
+          color = "brightgreen" if pct >= 90 else "green" if pct >= 80 else "yellow" if pct >= 70 else "red"
+          json.dump({"schemaVersion": 1, "label": "coverage", "message": f"{pct:.0f}%", "color": color},
+                    open("site/coverage.json", "w"))
+          print(f"line coverage {pct:.1f}%")
+          PY
+      - name: API documentation
+        run: |
+          doxygen Doxyfile
+          mv build-docs/html site/api
+      - name: Sample outputs
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DRADAR_BUILD_TESTS=OFF
+          cmake --build build -j
+          mkdir -p site/viewer site/samples
+          for s in default formation_os_cfar benchmark; do
+            ./build/radar_sim run scenarios/$s.ini -q -o out/$s
+            cp out/$s/viewer.html site/viewer/$s.html
+          done
+          ./build/radar_sim montecarlo scenarios/monte_carlo.ini -o out/mc
+          cp out/default/detections.csv out/default/tracks.csv out/default/timing.csv out/mc/pd_curve.csv site/samples/
+          cp docs/site/index.html site/index.html
+          cp docs/range_doppler.png docs/demo.gif site/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build-site
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

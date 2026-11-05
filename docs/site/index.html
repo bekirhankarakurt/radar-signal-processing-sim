@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>radar-signal-processing-sim</title>
+<style>
+:root{--bg:#0f1419;--panel:#171e26;--text:#e6edf3;--muted:#8b98a5;--accent:#4fc3f7;--line:#2a3440}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:960px;margin:0 auto;padding:32px 16px 48px}
+h1{font-size:26px;margin:0 0 4px}
+p.lead{color:var(--muted);margin:0 0 24px}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:20px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card h2{font-size:15px;margin:0 0 6px}
+.card p{margin:0;color:var(--muted);font-size:13.5px}
+img{max-width:100%;border:1px solid var(--line);border-radius:8px}
+footer{color:var(--muted);font-size:13px;margin-top:32px}
+</style>
+</head>
+<body>
+<main>
+<h1>radar-signal-processing-sim</h1>
+<p class="lead">Pulse-Doppler radar signal processing simulator in C++17: LFM pulse compression, MTI, Doppler FFT, 2-D CA/OS-CFAR, tracking and Monte Carlo Pd/Pfa analysis.</p>
+<img src="range_doppler.png" alt="Range-Doppler map with CFAR detections and confirmed tracks">
+<div class="grid">
+<div class="card"><h2><a href="viewer/default.html">Viewer: X-band surveillance</a></h2><p>Four targets over ground clutter, three-pulse MTI, CA-CFAR, 8 CPIs with tracks.</p></div>
+<div class="card"><h2><a href="viewer/formation_os_cfar.html">Viewer: formation, OS-CFAR</a></h2><p>Two aircraft 105 m apart; OS-CFAR detects the wingman that CA-CFAR masks.</p></div>
+<div class="card"><h2><a href="viewer/benchmark.html">Viewer: S-band benchmark</a></h2><p>60 km window, 128 pulses x 5285 samples per CPI, Taylor tapers.</p></div>
+<div class="card"><h2><a href="api/index.html">API reference</a></h2><p>Doxygen documentation of the library headers and sources.</p></div>
+<div class="card"><h2><a href="coverage/index.html">Coverage report</a></h2><p>Line and branch coverage of the unit tests (gcovr).</p></div>
+<div class="card"><h2>Sample outputs</h2><p><a href="samples/detections.csv">detections.csv</a> · <a href="samples/tracks.csv">tracks.csv</a> · <a href="samples/timing.csv">timing.csv</a> · <a href="samples/pd_curve.csv">pd_curve.csv</a></p></div>
+</div>
+<footer>Bekirhan Karakurt · <a href="https://github.com/bekirhankarakurt/radar-signal-processing-sim">github.com/bekirhankarakurt/radar-signal-processing-sim</a></footer>
+</main>
+</body>
+</html>
