@@ -11,6 +11,7 @@ option(RADAR_ENABLE_SANITIZERS "Build with AddressSanitizer and UndefinedBehavio
 option(RADAR_ENABLE_COVERAGE "Instrument the build for gcov coverage" OFF)
 option(RADAR_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 option(RADAR_NATIVE "Optimise for the build machine (-march=native)" OFF)
+option(RADAR_STATIC "Link the command-line tool statically (release archives)" OFF)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
@@ -61,7 +62,13 @@ target_compile_definitions(radar_core PUBLIC RADAR_VERSION="${PROJECT_VERSION}")
 
 if(RADAR_ENABLE_OPENMP)
     find_package(OpenMP COMPONENTS CXX)
-    if(OpenMP_CXX_FOUND)
+    if(OpenMP_CXX_FOUND AND RADAR_STATIC)
+        # A fully static binary needs libgomp.a; let the compiler driver pick it with -fopenmp.
+        separate_arguments(RADAR_OPENMP_FLAGS UNIX_COMMAND "${OpenMP_CXX_FLAGS}")
+        target_compile_options(radar_core PUBLIC ${RADAR_OPENMP_FLAGS})
+        target_link_options(radar_core PUBLIC ${RADAR_OPENMP_FLAGS})
+        message(STATUS "OpenMP enabled (static)")
+    elseif(OpenMP_CXX_FOUND)
         target_link_libraries(radar_core PUBLIC OpenMP::OpenMP_CXX)
         message(STATUS "OpenMP enabled")
     else()
@@ -74,6 +81,9 @@ endif()
 
 add_executable(radar_sim app/main.cpp)
 target_link_libraries(radar_sim PRIVATE radar_core)
+if(RADAR_STATIC)
+    target_link_options(radar_sim PRIVATE -static)
+endif()
 
 install(TARGETS radar_sim RUNTIME DESTINATION bin)
 
