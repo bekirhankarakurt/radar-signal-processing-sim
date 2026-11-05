@@ -19,7 +19,7 @@ FftPlan::FftPlan(std::size_t size)
     for (std::size_t i = 0; i < size; ++i) {
         std::size_t r = 0;
         for (std::size_t b = 0; b < bits; ++b) {
-            if ((i >> b) & 1U) {
+            if (((i >> b) & 1U) != 0) {
                 r |= std::size_t{1} << (bits - 1 - b);
             }
         }

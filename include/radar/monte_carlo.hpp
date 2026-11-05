@@ -32,6 +32,6 @@ struct MonteCarloResult {
 /// Pd versus SNR and empirical Pfa through the complete signal-processing chain.
 /// Trials are independent and seeded deterministically, so results do not depend
 /// on the thread count.
-[[nodiscard]] MonteCarloResult run_monte_carlo(const Scenario& scenario, StageTimer& timer);
+[[nodiscard]] MonteCarloResult run_monte_carlo(const Scenario& input, StageTimer& timer);
 
 }  // namespace radar

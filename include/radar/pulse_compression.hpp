@@ -27,7 +27,7 @@ private:
     std::size_t output_samples_;
     FftPlan plan_;
     ComplexVector reference_spectrum_;  // conj(FFT(windowed reference))
-    double snr_gain_;
+    double snr_gain_ = 0.0;
 };
 
 }  // namespace radar

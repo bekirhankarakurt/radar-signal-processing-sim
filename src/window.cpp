@@ -19,16 +19,16 @@ RealVector taylor_window(std::size_t length, int nbar, double sidelobe_db) {
     }
     const double eta = std::pow(10.0, -sidelobe_db / 20.0);
     const double a = std::acosh(eta) / kPi;
-    const double nb = static_cast<double>(nbar);
+    const auto nb = static_cast<double>(nbar);
     const double sigma2 = nb * nb / (a * a + (nb - 0.5) * (nb - 0.5));
 
     std::vector<double> fm(static_cast<std::size_t>(nbar - 1));
     for (int m = 1; m < nbar; ++m) {
-        const double md = static_cast<double>(m);
+        const auto md = static_cast<double>(m);
         double num = 1.0;
         double den = 1.0;
         for (int n = 1; n < nbar; ++n) {
-            const double nd = static_cast<double>(n);
+            const auto nd = static_cast<double>(n);
             num *= 1.0 - (md * md / sigma2) / (a * a + (nd - 0.5) * (nd - 0.5));
             if (n != m) {
                 den *= 1.0 - (md * md) / (nd * nd);
@@ -77,7 +77,7 @@ RealVector make_window(const WindowSpec& spec, std::size_t length) {
     }
     switch (spec.type) {
         case WindowType::Rectangular:
-            return RealVector(length, 1.0);
+            return RealVector(length, 1.0);  // NOLINT(modernize-return-braced-init-list): count, value
         case WindowType::Hann:
             return cosine_window(length, 0.5);
         case WindowType::Hamming:

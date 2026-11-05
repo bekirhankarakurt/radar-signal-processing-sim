@@ -3,6 +3,7 @@
 #include "radar/complex_math.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <utility>
 
 namespace radar {
@@ -33,7 +34,12 @@ std::vector<Detection> cluster_detections(const RealMatrix& power_map, const Cfa
                     if ((dr < 0 && r == 0) || (dr > 0 && r + 1 >= rows)) {
                         continue;
                     }
-                    const std::size_t nr = dr < 0 ? r - 1 : (dr > 0 ? r + 1 : r);
+                    std::size_t nr = r;
+                    if (dr < 0) {
+                        nr = r - 1;
+                    } else if (dr > 0) {
+                        nr = r + 1;
+                    }
                     for (int dd = -1; dd <= 1; ++dd) {
                         const std::size_t nd = (d + cols + static_cast<std::size_t>(dd + 1) - 1) % cols;
                         if (cfar.detections(nr, nd) != 0 && visited(nr, nd) == 0) {
@@ -52,7 +58,7 @@ std::vector<Detection> cluster_detections(const RealMatrix& power_map, const Cfa
             double weight = 0.0;
             double range_acc = 0.0;
             double doppler_acc = 0.0;
-            const auto half = static_cast<double>(cols / 2);
+            const double half = std::floor(static_cast<double>(cols) / 2.0);
             for (const auto& [r, d] : members) {
                 const double p = power_map(r, d);
                 double delta = static_cast<double>(d) - static_cast<double>(peak.second);

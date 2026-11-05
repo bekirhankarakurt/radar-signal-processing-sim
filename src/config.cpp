@@ -2,6 +2,7 @@
 
 #include "radar/complex_math.hpp"
 
+#include <array>
 #include <cctype>
 #include <cmath>
 #include <fstream>
@@ -84,7 +85,7 @@ public:
     }
 
     void read(std::string_view key, std::size_t& out) {
-        double d = static_cast<double>(out);
+        auto d = static_cast<double>(out);
         read(key, d);
         if (d < 0.0 || d != std::floor(d) || d > 1e12) {
             fail(section_, key, "expected a non-negative integer");
@@ -107,7 +108,7 @@ public:
     }
 
     void read(std::string_view key, int& out) {
-        double d = static_cast<double>(out);
+        auto d = static_cast<double>(out);
         read(key, d);
         if (d != std::floor(d) || std::abs(d) > 1e6) {
             fail(section_, key, "expected an integer");
@@ -148,7 +149,7 @@ public:
     }
 
     template <typename Enum, std::size_t N>
-    void read_enum(std::string_view key, Enum& out, const std::pair<const char*, Enum> (&options)[N]) {
+    void read_enum(std::string_view key, Enum& out, const std::array<std::pair<const char*, Enum>, N>& options) {
         if (const auto* v = find(key)) {
             const auto s = lower(*v);
             for (const auto& [name, value] : options) {
@@ -188,11 +189,12 @@ private:
     std::set<std::string, std::less<>> used_;
 };
 
-constexpr std::pair<const char*, Swerling> kSwerlingNames[] = {{"0", Swerling::Zero}, {"1", Swerling::One}};
-constexpr std::pair<const char*, MtiType> kMtiNames[] = {
-    {"none", MtiType::None}, {"two_pulse", MtiType::TwoPulse}, {"three_pulse", MtiType::ThreePulse}};
-constexpr std::pair<const char*, CfarType> kCfarNames[] = {{"ca", CfarType::CellAveraging},
-                                                           {"os", CfarType::OrderedStatistic}};
+constexpr std::array<std::pair<const char*, Swerling>, 2> kSwerlingNames{
+    {{"0", Swerling::Zero}, {"1", Swerling::One}}};
+constexpr std::array<std::pair<const char*, MtiType>, 3> kMtiNames{
+    {{"none", MtiType::None}, {"two_pulse", MtiType::TwoPulse}, {"three_pulse", MtiType::ThreePulse}}};
+constexpr std::array<std::pair<const char*, CfarType>, 2> kCfarNames{
+    {{"ca", CfarType::CellAveraging}, {"os", CfarType::OrderedStatistic}}};
 
 void require(bool ok, const std::string& message) {
     if (!ok) {
@@ -208,7 +210,7 @@ std::vector<IniSection> parse_ini(std::string_view text) {
     std::size_t pos = 0;
     while (pos <= text.size()) {
         const std::size_t eol = text.find('\n', pos);
-        std::string_view raw = text.substr(pos, eol == std::string_view::npos ? std::string_view::npos : eol - pos);
+        const std::string_view raw = text.substr(pos, eol == std::string_view::npos ? std::string_view::npos : eol - pos);
         pos = eol == std::string_view::npos ? text.size() + 1 : eol + 1;
         ++line_no;
 
@@ -328,7 +330,7 @@ Scenario scenario_from_ini(std::string_view text) {
 }
 
 Scenario load_scenario(const std::filesystem::path& path) {
-    std::ifstream in(path, std::ios::binary);
+    const std::ifstream in(path, std::ios::binary);
     if (!in) {
         throw std::runtime_error("cannot open scenario file '" + path.string() + "'");
     }

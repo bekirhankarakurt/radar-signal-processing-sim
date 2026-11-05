@@ -3,12 +3,13 @@
 #include "radar/types.hpp"
 
 #include <cstddef>
+#include <cstdint>
 #include <optional>
 #include <string_view>
 
 namespace radar {
 
-enum class WindowType { Rectangular, Hann, Hamming, Taylor };
+enum class WindowType : std::uint8_t { Rectangular, Hann, Hamming, Taylor };
 
 struct WindowSpec {
     WindowType type = WindowType::Rectangular;

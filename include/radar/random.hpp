@@ -39,17 +39,16 @@ public:
 
     /// Circular complex Gaussian sample with E|z|^2 = variance (Marsaglia polar method).
     [[nodiscard]] Complex complex_gaussian(double variance = 1.0) noexcept {
-        double u = 0.0;
-        double v = 0.0;
-        double s = 0.0;
-        do {
-            u = 2.0 * uniform() - 1.0;
-            v = 2.0 * uniform() - 1.0;
-            s = u * u + v * v;
-        } while (s >= 1.0 || s == 0.0);
-        // Each component has variance / 2.
-        const double scale = std::sqrt(-variance * std::log(s) / s);
-        return {u * scale, v * scale};
+        for (;;) {
+            const double u = 2.0 * uniform() - 1.0;
+            const double v = 2.0 * uniform() - 1.0;
+            const double s = u * u + v * v;
+            if (s < 1.0 && s > 0.0) {
+                // Each component has variance / 2.
+                const double scale = std::sqrt(-variance * std::log(s) / s);
+                return {u * scale, v * scale};
+            }
+        }
     }
 
     /// Unit-mean exponential sample.

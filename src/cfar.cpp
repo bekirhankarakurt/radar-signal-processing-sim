@@ -70,7 +70,7 @@ double os_cfar_alpha(std::size_t training_cells, std::size_t rank, double pfa) {
 }
 
 CfarDetector::CfarDetector(CfarType type, const CfarWindow& window, double pfa, double os_rank_fraction)
-    : type_(type), window_(window), alpha_(0.0) {
+    : type_(type), window_(window) {
     const std::size_t n = window.training_cells();
     if (n == 0) {
         throw std::invalid_argument("CFAR window has no training cells");
@@ -144,11 +144,10 @@ CfarResult CfarDetector::detect_ca(const RealMatrix& map) const {
     result.detections = Matrix<std::uint8_t>(rows, cols, 0);
     result.noise_estimate = RealMatrix(rows, cols, 0.0);
     const auto n = static_cast<double>(window_.training_cells());
-    const double alpha = alpha_;
     std::size_t hits = 0;
     const auto last_row = static_cast<std::ptrdiff_t>(rows - hr);
 #pragma omp parallel for schedule(static) reduction(+ : hits)
-    for (std::ptrdiff_t ri = static_cast<std::ptrdiff_t>(hr); ri < last_row; ++ri) {
+    for (auto ri = static_cast<std::ptrdiff_t>(hr); ri < last_row; ++ri) {
         const auto r = static_cast<std::size_t>(ri);
         const double* cut = map.row(r);
         for (std::size_t d = 0; d < cols; ++d) {
@@ -157,7 +156,7 @@ CfarResult CfarDetector::detect_ca(const RealMatrix& map) const {
             const double inner = rect(r - gr, r + gr + 1, pc - gd, pc + gd + 1);
             const double noise = std::max(outer - inner, 0.0) / n;
             result.noise_estimate(r, d) = noise;
-            if (cut[d] > alpha * noise) {
+            if (cut[d] > alpha_ * noise) {
                 result.detections(r, d) = 1;
                 ++hits;
             }
@@ -189,7 +188,7 @@ CfarResult CfarDetector::detect_os(const RealMatrix& map) const {
     {
         RealVector cells(n);
 #pragma omp for schedule(static)
-        for (std::ptrdiff_t ri = static_cast<std::ptrdiff_t>(hr); ri < last_row; ++ri) {
+        for (auto ri = static_cast<std::ptrdiff_t>(hr); ri < last_row; ++ri) {
             const auto r = static_cast<std::size_t>(ri);
             for (std::size_t d = 0; d < cols; ++d) {
                 gather_training(map, window_, r, d, cells);

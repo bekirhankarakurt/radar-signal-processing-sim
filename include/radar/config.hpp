@@ -12,9 +12,9 @@
 
 namespace radar {
 
-enum class Swerling { Zero, One };
-enum class MtiType { None, TwoPulse, ThreePulse };
-enum class CfarType { CellAveraging, OrderedStatistic };
+enum class Swerling : std::uint8_t { Zero, One };
+enum class MtiType : std::uint8_t { None, TwoPulse, ThreePulse };
+enum class CfarType : std::uint8_t { CellAveraging, OrderedStatistic };
 
 struct RadarParameters {
     double carrier_hz = 9.5e9;

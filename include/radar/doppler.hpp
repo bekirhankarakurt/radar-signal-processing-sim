@@ -4,6 +4,8 @@
 #include "radar/types.hpp"
 #include "radar/window.hpp"
 
+#include <cmath>
+
 namespace radar {
 
 /// Slow-time FFT processor. Produces a range-Doppler power map with rows = range
@@ -33,7 +35,7 @@ struct RangeDopplerAxes {
 
     [[nodiscard]] double range(double bin) const noexcept { return bin * range_bin_m; }
     [[nodiscard]] double velocity(double bin) const noexcept {
-        return (bin - static_cast<double>(doppler_bins / 2)) * velocity_bin_mps;
+        return (bin - std::floor(static_cast<double>(doppler_bins) / 2.0)) * velocity_bin_mps;
     }
 };
 

@@ -57,7 +57,7 @@ private:
     CfarType type_;
     CfarWindow window_;
     std::size_t rank_ = 0;
-    double alpha_;
+    double alpha_ = 0.0;
 };
 
 }  // namespace radar

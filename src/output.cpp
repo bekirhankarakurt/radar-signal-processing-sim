@@ -98,8 +98,8 @@ void write_ppm(const std::filesystem::path& path, const RealMatrix& rd_map, cons
     }
     if (options.mark_detections) {
         for (const auto& det : detections) {
-            const auto cx = static_cast<long>(std::lround((det.doppler_bin + 0.5) * static_cast<double>(x_scale)));
-            const auto cy = static_cast<long>(height - 1) - static_cast<long>(std::lround(det.range_bin / static_cast<double>(pool)));
+            const long cx = std::lround((det.doppler_bin + 0.5) * static_cast<double>(x_scale));
+            const long cy = static_cast<long>(height - 1) - std::lround(det.range_bin / static_cast<double>(pool));
             for (long k = -6; k <= 6; ++k) {
                 for (const auto& [x, y] : {std::pair{cx - 6, cy + k}, std::pair{cx + 6, cy + k}, std::pair{cx + k, cy - 6},
                                            std::pair{cx + k, cy + 6}}) {
@@ -175,7 +175,7 @@ void write_pd_csv(const std::filesystem::path& path, const MonteCarloResult& res
 }
 
 std::string base64_encode(const std::vector<std::uint8_t>& bytes) {
-    static constexpr char kAlphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static constexpr std::string_view kAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     std::string out;
     out.reserve((bytes.size() + 2) / 3 * 4);
     std::size_t i = 0;
