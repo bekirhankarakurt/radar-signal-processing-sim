@@ -1,0 +1,23 @@
+name: Feature request
+description: Suggest a new processing stage, output or option
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: What do you want to model or analyse that is not possible today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Algorithm, references or the scenario keys / CLI options you have in mind.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: How could it be verified?
+      description: Analytic expectation or reference result a test could check against.
