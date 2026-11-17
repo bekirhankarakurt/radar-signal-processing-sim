@@ -58,7 +58,7 @@ jobs:
           cp out/default/detections.csv out/default/tracks.csv out/default/timing.csv out/mc/pd_curve.csv site/samples/
           cp docs/site/index.html site/index.html
           cp docs/range_doppler.png docs/demo.gif site/
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
